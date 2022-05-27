@@ -4,6 +4,7 @@ from tensorflow.keras import models, layers, Sequential
 from tensorflow.keras.losses import SparseCategoricalCrossentropy as scce
 
 import matplotlib.pyplot as plt
+import numpy as np
 from utils import get_train_test_val_split
 
 
@@ -49,7 +50,9 @@ data_augmentation_layer = Sequential([
     layers.experimental.preprocessing.RandomFlip('horizontal_and_vertical'),
     layers.experimental.preprocessing.RandomRotation(0.2)
 ])
-model = Sequential([
+
+# Creating our classifier (CNN model)
+potato_clsf = Sequential([
     preprocess_layer,
     data_augmentation_layer,
     layers.Conv2D(
@@ -77,23 +80,35 @@ model = Sequential([
     layers.Dense(3, activation='softmax')
 ])
 
-model.build(input_shape=(
+potato_clsf.build(input_shape=(
     config.BATCH_SIZE,
     config.IMAGE_SIZE[0],
     config.IMAGE_SIZE[0],
     config.CHANNELS
 ))
 
-model.compile(
+potato_clsf.compile(
     optimizer='adam',
     loss=scce(from_logits=False),
     metrics=['accuracy']
 )
 
-history = model.fit(
+history = potato_clsf.fit(
     train_data,
     batch_size=config.BATCH_SIZE,
     validation_data=val_data,
     verbose=1,
     epochs=config.EPOCHS
 )
+
+def predict(model, img):
+    img_array = tf.expand_dims(img, 0)
+
+    predictions = model.predict(img_array)
+
+    predicted_class = dataset.class_names[np.argmax(predictions[0])]
+    confidence = round(100 * (np.max(predictions[0])), 2)
+    return predicted_class, confidence
+
+
+potato_clsf.save('./clsf.h5')
