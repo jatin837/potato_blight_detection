@@ -1,6 +1,8 @@
 import config
 import tensorflow as tf
 from tensorflow.keras import models, layers, Sequential
+from tensorflow.keras.losses import SparseCategoricalCrossentropy as scce
+
 import matplotlib.pyplot as plt
 from utils import get_train_test_val_split
 
@@ -81,3 +83,17 @@ model.build(input_shape=(
     config.IMAGE_SIZE[0],
     config.CHANNELS
 ))
+
+model.compile(
+    optimizer='adam',
+    loss=scce(from_logits=False),
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    train_data,
+    batch_size=config.BATCH_SIZE,
+    validation_data=val_data,
+    verbose=1,
+    epochs=config.EPOCHS
+)
