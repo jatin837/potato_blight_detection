@@ -47,3 +47,37 @@ data_augmentation_layer = Sequential([
     layers.experimental.preprocessing.RandomFlip('horizontal_and_vertical'),
     layers.experimental.preprocessing.RandomRotation(0.2)
 ])
+model = Sequential([
+    preprocess_layer,
+    data_augmentation_layer,
+    layers.Conv2D(
+        32, (3, 3),
+        activation='relu',
+        input_shape=(
+            config.BATCH_SIZE,
+            config.IMAGE_SIZE[0],
+            config.IMAGE_SIZE[1],
+            config.CHANNELS)
+    ),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(3, activation='softmax')
+])
+
+model.build(input_shape=(
+    config.BATCH_SIZE,
+    config.IMAGE_SIZE[0],
+    config.IMAGE_SIZE[0],
+    config.CHANNELS
+))
