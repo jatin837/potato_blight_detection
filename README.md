@@ -10,5 +10,7 @@ Blight is a form of plant disease, typically one caused by fungi such as mildews
 This is an end-to-end deep learning project to classify status of blight on the potato plant.
 
 # 💻 Tech Stack
+[Tensorflow Serving](https://www.tensorflow.org/tfx/serving/docker)
+![FastAPI](https://fastapi.tiangolo.com/tutorial/#install-fastapi)
 
 # ⭐ Acknowledgments
