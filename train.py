@@ -4,7 +4,6 @@ from tensorflow.keras import models, layers, Sequential
 from tensorflow.keras.losses import SparseCategoricalCrossentropy as scce
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 from utils import get_train_test_val_split
 
 
@@ -108,12 +107,10 @@ def predict(model, img):
     img_array = tf.expand_dims(img, 0)
     predictions = model.predict(img_array)
     predicted_class = dataset.class_names[np.argmax(predictions[0])]
-    confidence = round(100 * (np.max(predictions[0])), 2)
+    confidence = round(100*(np.max(predictions[0])), 2)
     return predicted_class, confidence
 
 
-model_version=max([int(i) for i in os.listdir("./models") + [0]])+1
+potato_clsf.save(f"./models/{config.MODEL_VERSION}")
 
-potato_clsf.save(f"./models/{model_version}")
-
-potato_clsf.save('./clsf.h5')
+potato_clsf.save(config.MODEL_NAME)
