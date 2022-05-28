@@ -2,9 +2,9 @@ import config
 import tensorflow as tf
 from tensorflow.keras import models, layers, Sequential
 from tensorflow.keras.losses import SparseCategoricalCrossentropy as scce
-
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from utils import get_train_test_val_split
 
 
@@ -20,19 +20,21 @@ dataset = tf.keras.utils.image_dataset_from_directory(
 
 # split the dataset for training, testing and validation purposes
 train_data, test_data, val_data = get_train_test_val_split(
-    0.8,
-    0.1,
-    0.1,
+    config.TRIAN_SIZE,
+    config.TEST_SIZE,
+    config.VALIDATION_SIZE,
     dataset
 )
 
-# Enable cache and prefetching
+# Enable cache, shuffle & prefetching
 train_data = train_data.cache().shuffle(1000).prefetch(
     buffer_size=tf.data.AUTOTUNE
 )
+
 test_data = test_data.cache().shuffle(1000).prefetch(
     buffer_size=tf.data.AUTOTUNE
 )
+
 val_data = val_data.cache().shuffle(1000).prefetch(
     buffer_size=tf.data.AUTOTUNE
 )
@@ -62,7 +64,8 @@ potato_clsf = Sequential([
             config.BATCH_SIZE,
             config.IMAGE_SIZE[0],
             config.IMAGE_SIZE[1],
-            config.CHANNELS)
+            config.CHANNELS
+        )
     ),
     layers.MaxPooling2D((2, 2)),
     layers.Conv2D(64, (3, 3), activation='relu'),
@@ -103,12 +106,14 @@ history = potato_clsf.fit(
 
 def predict(model, img):
     img_array = tf.expand_dims(img, 0)
-
     predictions = model.predict(img_array)
-
     predicted_class = dataset.class_names[np.argmax(predictions[0])]
     confidence = round(100 * (np.max(predictions[0])), 2)
     return predicted_class, confidence
 
+
+model_version=max([int(i) for i in os.listdir("./models") + [0]])+1
+
+potato_clsf.save(f"./models/{model_version}")
 
 potato_clsf.save('./clsf.h5')
