@@ -22,11 +22,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# endpoint = "http://localhost:8085/v1/models/potatoes_model:predict"
+endpoint = "http://localhost:8050/v1/models/potatoes_clsf:predict"
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
-MODEL = tf.keras.models.load_model('../models/1')
+# MODEL = tf.keras.models.load_model('../models/1')
 
 @app.get("/ping")
 async def ping():
@@ -41,19 +41,20 @@ async def predict(
     file: UploadFile
 ):
     print(f'got {file.filename}')
+
     image = read_file_as_image(await file.read())
     img_batch = np.expand_dims(image, 0)
 
-##  json_data = {
-##      "instances": img_batch.tolist()
-##  }
+    json_data = {
+        "instances": img_batch.tolist()
+    }
 
-#    response = requests.post(endpoint, json=json_data)
-    prediction = MODEL.predict(img_batch)
+    response = requests.post(endpoint, json=json_data)
+
+    prediction = response.json()['predictions'][0]
 
     predicted_class = CLASS_NAMES[np.argmax(prediction)]
     confidence = np.max(prediction)
-    print(predicted_class)
 
     return {
         "class": predicted_class,
