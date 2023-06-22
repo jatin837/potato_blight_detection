@@ -12,5 +12,6 @@ This is an end-to-end deep learning project to classify status of blight on the 
 # 💻 Tech Stack
 - [Tensorflow Serving](https://www.tensorflow.org/tfx/serving/docker)
 - [FastAPI](https://fastapi.tiangolo.com/tutorial/#install-fastapi)
-
+# Model Architechture
+![model_arch](https://github.com/jatin837/potato_blight_detection/assets/63631162/02f0034f-ff6d-4dec-9166-fae2b4239d85)
 # ⭐ Acknowledgments
